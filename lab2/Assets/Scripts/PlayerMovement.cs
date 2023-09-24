@@ -1,0 +1,215 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+public class PlayerMovement: MonoBehaviour {
+    public float speed = 10;
+    public float maxSpeed = 20;
+    public float upSpeed = 10;
+    private bool onGroundState = true;
+
+    // keep track of which side the mario sprite is facing
+    private SpriteRenderer marioSprite;
+    private bool faceRightState = true;
+
+    private Rigidbody2D marioBody;
+
+    // other variables
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI gameOverScoreText;
+    public GameObject enemies;
+    public GameObject gameOverUI;
+    public GameObject normalUI;
+
+    public JumpOverGoomba jumpOverGoomba;
+    private Vector3 startPosition;
+    
+    // for animation
+    public Animator marioAnimator;
+    private float skidSpeed = 0.05f;
+    public float deathImpulse = 20.0f;
+
+    // for audio
+    public AudioSource marioAudio;
+    public AudioClip marioDeath;
+    public Transform gameCamera;
+
+
+    private bool wasIdle = true;
+
+    // state
+    [System.NonSerialized]
+    public bool alive = true;
+
+    // Start is called before the first frame update
+    void Start() {
+        // Set to be 30 FPS
+        Application.targetFrameRate =  30;
+        marioBody = GetComponent<Rigidbody2D>();
+
+        // assign mario sprite object
+        marioSprite = GetComponent<SpriteRenderer>();
+
+        startPosition = marioBody.transform.position;
+        gameOverUI.SetActive(false);
+
+        // update animator state
+        marioAnimator.SetBool("onGround", onGroundState);
+    }
+
+    void PlayDeathImpulse() {
+        Debug.Log("DEATH_IMPULSE");
+        marioBody.AddForce(Vector2.up * deathImpulse, ForceMode2D.Impulse);
+    }
+
+    void GameOverScene() {
+        // stop time
+        // set game over scene
+        StartCoroutine(this.activateGameOver());
+    }
+
+    void PlayJumpSound() {
+        // play jump sound
+        marioAudio.PlayOneShot(marioAudio.clip);
+    }
+
+    // Update is called once per frame
+    void Update() {
+        // toggle state
+        float velocity = Mathf.Abs(marioBody.velocity.x);
+
+        if (Input.GetKeyDown("a") && faceRightState) {
+            faceRightState = false;
+            marioSprite.flipX = true;
+
+            if ((velocity > this.skidSpeed) && !wasIdle) {
+                marioAnimator.SetTrigger("onSkid");
+            }
+
+            wasIdle = false;
+        }
+
+        if (Input.GetKeyDown("d") && !faceRightState) {
+            faceRightState = true;
+            marioSprite.flipX = false;
+
+            if ((velocity > this.skidSpeed) && !wasIdle) {
+                marioAnimator.SetTrigger("onSkid");
+            }
+
+            wasIdle = false;
+        }
+
+        // Debug.Log("X-SPEED " + Mathf.Abs(marioBody.velocity.x));
+        marioAnimator.SetFloat("xSpeed", velocity);
+        if (velocity < 0.01f) { wasIdle = true; }
+    }
+
+    void OnTriggerEnter2D(Collider2D other) {
+      if (other.gameObject.CompareTag("Enemy")) {
+            Debug.Log("Collided with goomba!");
+            // StartCoroutine(this.activateGameOver());
+
+            if (alive) {
+                // play death animation
+                marioAnimator.Play("mario-die");
+                marioAudio.PlayOneShot(marioDeath);
+                alive = false;
+            }
+        }
+    }
+
+    IEnumerator activateGameOver() {
+        gameOverUI.SetActive(true);
+        normalUI.SetActive(false);
+        yield return new WaitForSeconds(1.0f);
+        Time.timeScale = 0.0f;
+    }
+
+    // FixedUpdate is called 50 times a second
+    // FixedUpdate may be called once per frame. See documentation for details.
+    void FixedUpdate() {
+        if (!alive) { return; }
+        float moveHorizontal = Input.GetAxisRaw("Horizontal");
+
+        if (Mathf.Abs(moveHorizontal) > 0) {
+            Vector2 movement = new Vector2(moveHorizontal, 0);
+            // check if it doesn't go beyond maxSpeed
+            if (marioBody.velocity.magnitude < maxSpeed) {
+                marioBody.AddForce(movement * speed);
+            }
+        }
+
+        // stop
+        if (Input.GetKeyUp("a") || Input.GetKeyUp("d")) {
+            // stop
+            marioBody.velocity = Vector2.zero;
+        }
+
+        if (
+            Input.GetKeyDown("space") && onGroundState &&
+            (marioBody.velocity.y < 0.01f)
+        ) {
+            marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
+            this.onGroundState = false;
+            // update animator state
+            marioAnimator.SetBool("onGround", onGroundState);
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D col) {
+        // Debug.Log("COLLIDE_TAG: " + col.gameObject.tag);
+        var contact = col.contacts[0];
+        // check that collision is from the bottom of the player
+        bool fromBottom = Vector2.Dot(contact.normal, Vector2.up) > 0.5;
+
+        if (!onGroundState && fromBottom && (
+            col.gameObject.CompareTag("Ground") ||
+            col.gameObject.CompareTag("Enemy") || 
+            col.gameObject.CompareTag("Obstacles") 
+        )) {
+            onGroundState = true;
+            // update animator state
+            marioAnimator.SetBool("onGround", onGroundState);
+        }
+    }
+
+    public void RestartButtonCallback(int input) {
+        Debug.Log("Restart!");
+        // reset everything
+        ResetGame();
+        // resume time
+        Time.timeScale = 1.0f;
+    }
+
+    private void ResetGame() {
+        // reset position
+        // marioBody.transform.position = new Vector3(-5.33f, -4.69f, 0.0f);
+        marioBody.transform.position = startPosition;
+        // reset camera position
+        gameCamera.position = new Vector3(0, 0, -10);
+
+            // reset animation
+        marioAnimator.SetTrigger("gameRestart");
+        alive = true;
+
+        marioBody.velocity = Vector2.zero;
+        gameOverUI.SetActive(false);
+        normalUI.SetActive(true);
+
+        // reset sprite direction
+        faceRightState = true;
+        marioSprite.flipX = false;
+        // reset score
+        scoreText.text = "Score: 0";
+        // reset Goomba
+        foreach (Transform eachChild in enemies.transform) {
+            // eachChild.transform.localPosition = eachChild.GetComponent<EnemyMovement>().startPosition;
+            eachChild.GetComponent<EnemyMovement>().reset();
+        }
+
+        // reset score
+        jumpOverGoomba.score = 0;
+    }
+} 
