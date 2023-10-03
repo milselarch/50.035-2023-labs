@@ -25,6 +25,14 @@ public class EnemyMovement : MonoBehaviour {
         ComputeVelocity();
     }
 
+    public void GameRestart()
+    {
+        transform.localPosition = startPosition;
+        originalX = transform.position.x;
+        moveRight = -1;
+        ComputeVelocity();
+    }
+
     void ComputeVelocity() {
         velocity = new Vector2((moveRight) * maxOffset / enemyPatroltime, 0);
     }

@@ -15,12 +15,13 @@ public class PlayerMovement: MonoBehaviour {
 
     private Rigidbody2D marioBody;
 
-    // other variables
+    /*
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverScoreText;
-    public GameObject enemies;
     public GameObject gameOverUI;
     public GameObject normalUI;
+    */
+    public GameObject enemies;
 
     public JumpOverGoomba jumpOverGoomba;
     private Vector3 startPosition;
@@ -53,7 +54,7 @@ public class PlayerMovement: MonoBehaviour {
         marioSprite = GetComponent<SpriteRenderer>();
 
         startPosition = marioBody.transform.position;
-        gameOverUI.SetActive(false);
+        // gameOverUI.SetActive(false);
 
         // update animator state
         marioAnimator.SetBool("onGround", onGroundState);
@@ -161,8 +162,8 @@ public class PlayerMovement: MonoBehaviour {
     }
 
     IEnumerator activateGameOver() {
-        gameOverUI.SetActive(true);
-        normalUI.SetActive(false);
+        // gameOverUI.SetActive(true);
+        // normalUI.SetActive(false);
         yield return new WaitForSeconds(1.0f);
         Time.timeScale = 0.0f;
     }
@@ -246,6 +247,23 @@ public class PlayerMovement: MonoBehaviour {
         Time.timeScale = 1.0f;
     }
 
+    public void GameRestart()
+    {
+        // reset position
+        marioBody.transform.position = startPosition;
+
+        // reset sprite direction
+        faceRightState = true;
+        marioSprite.flipX = false;
+
+        // reset animation
+        marioAnimator.SetTrigger("gameRestart");
+        alive = true;
+
+        // reset camera position
+        gameCamera.position = new Vector3(0, 0, -10);
+    }
+
     private void ResetGame() {
         // reset position
         // marioBody.transform.position = new Vector3(-5.33f, -4.69f, 0.0f);
@@ -258,8 +276,8 @@ public class PlayerMovement: MonoBehaviour {
         alive = true;
 
         marioBody.velocity = Vector2.zero;
-        gameOverUI.SetActive(false);
-        normalUI.SetActive(true);
+        // gameOverUI.SetActive(false);
+        // normalUI.SetActive(true);
 
         // reset sprite direction
         faceRightState = true;
