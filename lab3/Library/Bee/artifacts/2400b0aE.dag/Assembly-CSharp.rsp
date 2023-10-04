@@ -376,6 +376,7 @@
 -analyzer:"/home/milselarch/Unity/Hub/Editor/2022.3.9f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/InputSystem/MarioActions.cs"
 "Assets/Scripts/ActionManager.cs"
+"Assets/Scripts/AnimationEventIntTool.cs"
 "Assets/Scripts/CameraController.cs"
 "Assets/Scripts/CoinController.cs"
 "Assets/Scripts/EnemyManager.cs"

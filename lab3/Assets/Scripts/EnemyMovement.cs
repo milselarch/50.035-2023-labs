@@ -11,11 +11,14 @@ public class EnemyMovement : MonoBehaviour {
     private float enemyPatroltime = 2.0f;
     private int moveRight = -1;
     private Vector2 velocity;
+    public Animator enemyAnimator;
 
     private Rigidbody2D enemyBody;
+    public AudioSource enemyAudio;
 
     // public Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 startPosition;
+    private bool dead = false;
 
     void Start() {
         this.startPosition = transform.position;
@@ -27,7 +30,11 @@ public class EnemyMovement : MonoBehaviour {
 
     public void GameRestart()
     {
-        transform.localPosition = startPosition;
+        GetComponent<Rigidbody2D>().simulated = true;
+        GetComponent<SpriteRenderer>().enabled = true;
+        enemyAnimator.SetBool("die", false);
+
+        transform.position = startPosition;
         originalX = transform.position.x;
         moveRight = -1;
         ComputeVelocity();
@@ -43,6 +50,29 @@ public class EnemyMovement : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other) {
         Debug.Log(other.gameObject.name);
+    }
+
+    void OnCollisionEnter2D(Collision2D col) {
+        // Debug.Log("COLLIDE_TAG: " + col.gameObject.tag);
+        var contact = col.contacts[0];
+        // check that collision is from the bottom of the player
+        bool fromTop = Vector2.Dot(contact.normal, Vector2.up) < -0.5;
+
+        if (col.gameObject.CompareTag("Player")) {
+            if (fromTop) {
+                enemyAudio.PlayOneShot(enemyAudio.clip);
+                GetComponent<Rigidbody2D>().simulated = false;
+                enemyAnimator.SetBool("die", true);
+                StartCoroutine(waitDeathAnimation());
+            }
+        }
+    }
+
+    IEnumerator waitDeathAnimation() {
+        // gameOverUI.SetActive(true);
+        // normalUI.SetActive(false);
+        yield return new WaitForSeconds(1.0f);
+        GetComponent<SpriteRenderer>().enabled = false;
     }
 
     public void reset() {

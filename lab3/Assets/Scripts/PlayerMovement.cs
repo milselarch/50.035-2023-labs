@@ -8,6 +8,7 @@ public class PlayerMovement: MonoBehaviour {
     public float maxSpeed = 20;
     public float upSpeed = 10;
     private bool onGroundState = true;
+    public GameManager gameManager;
 
     // keep track of which side the mario sprite is facing
     private SpriteRenderer marioSprite;
@@ -46,6 +47,8 @@ public class PlayerMovement: MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        gameManager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>();
+
         // Set to be 30 FPS
         Application.targetFrameRate =  30;
         marioBody = GetComponent<Rigidbody2D>();
@@ -146,21 +149,6 @@ public class PlayerMovement: MonoBehaviour {
         }
     }
 
-
-    void OnTriggerEnter2D(Collider2D other) {
-      if (other.gameObject.CompareTag("Enemy")) {
-            Debug.Log("Collided with goomba!");
-            // StartCoroutine(this.activateGameOver());
-
-            if (alive) {
-                // play death animation
-                marioAnimator.Play("mario-die");
-                marioAudio.PlayOneShot(marioDeath);
-                alive = false;
-            }
-        }
-    }
-
     IEnumerator activateGameOver() {
         // gameOverUI.SetActive(true);
         // normalUI.SetActive(false);
@@ -228,6 +216,21 @@ public class PlayerMovement: MonoBehaviour {
         // check that collision is from the bottom of the player
         bool fromBottom = Vector2.Dot(contact.normal, Vector2.up) > 0.5;
 
+        if (col.gameObject.CompareTag("Enemy")) {
+            Debug.Log("Collided with goomba!");
+            // StartCoroutine(this.activateGameOver());
+
+            if (fromBottom) {
+                gameManager.IncreaseScore(1);
+            } else if (alive) {
+                gameManager.GameOver();
+                // play death animation
+                marioAnimator.Play("mario-die");
+                marioAudio.PlayOneShot(marioDeath);
+                alive = false;
+            }
+        }
+
         if (!onGroundState && fromBottom && (
             col.gameObject.CompareTag("Ground") ||
             col.gameObject.CompareTag("Enemy") || 
@@ -283,7 +286,7 @@ public class PlayerMovement: MonoBehaviour {
         faceRightState = true;
         marioSprite.flipX = false;
         // reset score
-        scoreText.text = "Score: 0";
+        // scoreText.text = "Score: 0";
         // reset Goomba
         foreach (Transform eachChild in enemies.transform) {
             // eachChild.transform.localPosition = eachChild.GetComponent<EnemyMovement>().startPosition;

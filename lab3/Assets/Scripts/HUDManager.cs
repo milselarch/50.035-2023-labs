@@ -23,7 +23,7 @@ public class HUDManager: MonoBehaviour {
     public void SetScore(int score) {
         string scoreText = "Score: " + score.ToString();
         this.scoreText.text = scoreText;
-        this.gameOverScoreText = scoreText;
+        this.gameOverScoreText.text = scoreText;
     }
 
     IEnumerator activateGameOver() {

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class JumpOverGoomba : MonoBehaviour {
+public class JumpOverGoomba: MonoBehaviour {
     public Transform enemyLocation;
     public GameManager gameManager;
-
     private bool onGroundState;
 
     [System.NonSerialized]
@@ -23,12 +22,11 @@ public class JumpOverGoomba : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-
+    void Update() {
+        
     }
 
+    /*
     void FixedUpdate()
     {
         // when jumping, and Goomba is near Mario and we haven't registered our score
@@ -42,16 +40,16 @@ public class JumpOverGoomba : MonoBehaviour {
         }
 
     }
+    */
 
 
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.CompareTag("Ground")) onGroundState = true;
+    void OnCollisionEnter2D(Collision2D col) {
+        if (col.gameObject.CompareTag("Ground")) {
+            onGroundState = true;
+        }
     }
 
-
-    private bool onGroundCheck()
-    {
+    private bool onGroundCheck() {
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask))
         {
             Debug.Log("on ground");

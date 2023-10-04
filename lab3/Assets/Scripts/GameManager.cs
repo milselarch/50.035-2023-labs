@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GameManager : MonoBehaviour
+public class GameManager: MonoBehaviour
 {
     // events
     public UnityEvent gameStart;
@@ -34,8 +34,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
     }
 
-    public void IncreaseScore(int increment)
-    {
+    public void IncreaseScore(int increment) {
         score += increment;
         SetScore(score);
     }
@@ -48,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        Time.timeScale = 0.0f;
+        // Time.timeScale = 0.0f;
         gameOver.Invoke();
     }
 }
