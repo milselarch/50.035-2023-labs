@@ -9,9 +9,19 @@ public class QuestionBoxController: MonoBehaviour {
     public SpriteRenderer spriteRenderer;
     public bool allowCoinSpawn = true;
 
+    private Sprite startSprite;
+    private bool startFlashing;
+
     // Start is called before the first frame update
     void Start() {
-        
+        GameManager.instance.gameRestart.AddListener(restart);
+        startSprite = spriteRenderer.sprite;
+        startFlashing = flashingAnimator.enabled;
+    }
+
+    public void restart() {
+        spriteRenderer.sprite = startSprite;
+        flashingAnimator.enabled = startFlashing;
     }
 
     // Update is called once per frame

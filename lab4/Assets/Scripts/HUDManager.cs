@@ -7,8 +7,14 @@ using TMPro;
 public class HUDManager: MonoBehaviour {
     public GameObject gameOverUI;
     public GameObject normalUI;
+    public GameObject pauseUI;
+
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI gameOverScoreText;
+    public GameObject highscoreText;
+    public IntVariable gameScore;
+
+    public AudioSource backgroundAudio;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +25,16 @@ public class HUDManager: MonoBehaviour {
     void Update()
     {
 
+    }
+
+    public void pauseGame() {
+        this.pauseUI.SetActive(true);
+        backgroundAudio.Pause();
+    }
+
+    public void resumeGame() {
+        this.pauseUI.SetActive(false);
+        backgroundAudio.Play();
     }
 
     void Awake() {
@@ -33,6 +49,8 @@ public class HUDManager: MonoBehaviour {
 
     public void SetScore(int score) {
         string scoreText = "Score: " + score.ToString();
+        this.gameScore.Value = score;
+
         this.scoreText.text = scoreText;
         this.gameOverScoreText.text = scoreText;
     }
@@ -48,10 +66,22 @@ public class HUDManager: MonoBehaviour {
         // hide gameover panel
         gameOverUI.SetActive(false);
         normalUI.SetActive(true);
+        this.resumeGame();
+
+        backgroundAudio.Stop();
+        backgroundAudio.Play();
     }
 
     public void GameOver() {
         gameOverUI.SetActive(true);
         normalUI.SetActive(false);
+
+        // set highscore
+        highscoreText.GetComponent<TextMeshProUGUI>().text = (
+            "TOP- " + gameScore.previousHighestValue.ToString("D6")
+        );
+
+        // show
+        highscoreText.SetActive(true);
     }
 }

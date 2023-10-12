@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e78dbeab1537f271b693ef2d7e0935d, type: 3}
   m_Name: GameConstants
   m_EditorClassIdentifier: 
-  maxLives: 10
-  speed: 150
-  maxSpeed: 5
-  upSpeed: 30
-  deathImpulse: 45
+  maxLives: 3
+  speed: 20
+  maxSpeed: 30
+  upSpeed: 15
+  deathImpulse: 20
   marioStartingPosition: {x: -5.33, y: -4.69, z: 0}
   goombaPatrolTime: 2
   goombaMaxOffset: 5

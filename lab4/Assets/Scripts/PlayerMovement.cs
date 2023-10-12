@@ -6,7 +6,7 @@ using TMPro;
 
 public class PlayerMovement: MonoBehaviour {
     public GameConstants gameConstants;
-    float deathImpulse = 20.0f;
+    float deathImpulse = 5.0f;
     float upSpeed = 10;
     float maxSpeed = 20;
     float speed = 10;
