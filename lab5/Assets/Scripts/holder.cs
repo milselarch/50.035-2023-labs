@@ -11,10 +11,10 @@ public class holder : MonoBehaviour
     }
 
     public void pause() {
-        GameManager.instance.PauseGame();
+        // GameManager.instance.PauseGame();
     }
     public void restart() {
-        GameManager.instance.GameRestart();
+        // GameManager.instance.GameRestart();
     }
 
 

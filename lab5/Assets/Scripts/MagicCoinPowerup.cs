@@ -18,7 +18,7 @@ public class MagicCoinPowerup : BasePowerup
     protected override void Start()
     {
         base.Start(); // call base class Start()
-        this.type = IPowerupType.Coin;
+        this.type = PowerupType.Coin;
         // GameManager.instance.gameRestart.AddListener(restart);
         startPosition = transform.position;
     }

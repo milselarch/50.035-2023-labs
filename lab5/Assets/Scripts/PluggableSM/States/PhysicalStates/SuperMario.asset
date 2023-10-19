@@ -12,9 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 598b88f779596051892bb1fb2579b155, type: 3}
   m_Name: SuperMario
   m_EditorClassIdentifier: 
-  setupActions: []
+  setupActions:
+  - {fileID: 11400000, guid: 1e528b9b75808f98fa38ce196f597e63, type: 2}
   actions: []
   eventTriggeredActions: []
   exitActions: []
-  transitions: []
+  transitions:
+  - decision: {fileID: 11400000, guid: 522c325b5011983f59447b4b8971efc5, type: 2}
+    trueState: {fileID: 11400000, guid: 8b856367df5f9338596109cb95ed95c9, type: 2}
+    falseState: {fileID: 11400000, guid: 4d1a47cd003abfe8faa02ad2722cf957, type: 2}
+  - decision: {fileID: 11400000, guid: df12d4280a981ec489fba42cccc6bd68, type: 2}
+    trueState: {fileID: 11400000, guid: babcaab5bae12e22d99409e91cad0379, type: 2}
+    falseState: {fileID: 11400000, guid: 4d1a47cd003abfe8faa02ad2722cf957, type: 2}
   sceneGizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

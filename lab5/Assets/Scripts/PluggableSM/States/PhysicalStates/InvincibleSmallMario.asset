@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 598b88f779596051892bb1fb2579b155, type: 3}
   m_Name: InvincibleSmallMario
   m_EditorClassIdentifier: 
-  setupActions: []
+  setupActions:
+  - {fileID: 11400000, guid: 7e20bdfc038ee1a1a86df1b04f495078, type: 2}
   actions: []
   eventTriggeredActions: []
   exitActions: []
-  transitions: []
+  transitions:
+  - decision: {fileID: 11400000, guid: dd6b5fef270e6bd1cbec7e7509501ccc, type: 2}
+    trueState: {fileID: 11400000, guid: 22df21c8c33f1b15780c0e02a0645d64, type: 2}
+    falseState: {fileID: 11400000, guid: 4d1a47cd003abfe8faa02ad2722cf957, type: 2}
   sceneGizmoColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

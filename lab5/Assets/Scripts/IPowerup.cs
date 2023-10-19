@@ -1,11 +1,13 @@
 using UnityEngine;
 
+/*
 public enum IPowerupType {
     Coin = 0,
     MagicMushroom = 1,
     OneUpMushroom = 2,
     StarMan = 3
 }
+*/
 
 public interface IPowerup
 {
@@ -13,7 +15,7 @@ public interface IPowerup
     void SpawnPowerup();
     void ApplyPowerup(MonoBehaviour i);
 
-    IPowerupType powerupType
+    PowerupType powerupType
     {
         get;
     }

@@ -16,7 +16,7 @@ public class EnemyController: MonoBehaviour {
     // public Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);
     public Vector3 startPosition;
     private bool dead = false;
-
+    
     // public UnityEvent onKillPlayer;
 
     void Start() {

@@ -7,13 +7,43 @@ public abstract class StateController : MonoBehaviour
     public State currentState;
     public State remainState;
     public bool transitionStateChanged = false;
-    [HideInInspector] public float stateTimeElapsed;
-
     public bool isActive = true;
 
+    [HideInInspector] public float stateTimeElapsed;
+
+    private State _startState;
+    private State _previousState;
+    private State _currentState;
+    private State _remainState;
+    private bool _transitionStateChanged = false;
+    
     public virtual void Start()
     {
+        Debug.Log("CSTATE " + currentState?.name);
+        
+        _startState = startState;
+        _previousState = previousState;
+        _currentState = currentState;
+        _remainState = remainState;
+        _transitionStateChanged = transitionStateChanged;
+        this.restart();
+    }
+
+    public void restart()
+    {
+        Debug.Log("CONTROLLER_RESTART");
+        startState = _startState;
+        previousState = null;
+        currentState = _currentState;
+        remainState = _remainState;
+        transitionStateChanged = _transitionStateChanged;
+        stateTimeElapsed = 0.0f;
+
+        currentState = startState;
         OnSetupState(); // setup when game starts
+
+        Debug.Log("RELOAD _START_STATE " + startState?.name);
+        Debug.Log("RELOAD _CURRENT " + currentState?.name);
     }
 
     public virtual void OnSetupState()
@@ -71,6 +101,7 @@ public abstract class StateController : MonoBehaviour
     {
         if (!isActive) return; // this is different from gameObject active, allow for separate control
 
+        if (currentState == null) { return; }
         currentState.UpdateState(this);
     }
     /********************************/

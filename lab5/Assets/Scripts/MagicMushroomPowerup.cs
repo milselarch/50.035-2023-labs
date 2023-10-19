@@ -18,7 +18,7 @@ public class MagicMushroomPowerup : BasePowerup
     protected override void Start()
     {
         base.Start(); // call base class Start()
-        this.type = IPowerupType.MagicMushroom;
+        this.type = PowerupType.MagicMushroom;
         // GameManager.instance.gameRestart.AddListener(restart);
         startPosition = transform.position;
     }
@@ -49,6 +49,9 @@ public class MagicMushroomPowerup : BasePowerup
             // then destroy powerup (optional)
             Debug.Log("SHROOM_POWERUP_DESTROY");
             DestroyPowerup();
+
+            this.ApplyPowerup(col.gameObject.GetComponent<MarioStateController>());
+            
         } else {
             if (fromLeft && !this.goRight) {
                 this.goRight = !this.goRight;
@@ -113,7 +116,13 @@ public class MagicMushroomPowerup : BasePowerup
     // interface implementation
     public override void ApplyPowerup(MonoBehaviour i)
     {
-        // TODO: do something with the object
-
+        // base.ApplyPowerup(i);
+        // try
+        MarioStateController mario;
+        bool result = i.TryGetComponent<MarioStateController>(out mario);
+        if (result)
+        {
+            mario.SetPowerup(this.powerupType);
+        }
     }
 }

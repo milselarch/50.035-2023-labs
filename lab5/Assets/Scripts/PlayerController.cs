@@ -29,7 +29,7 @@ public class PlayerController: MonoBehaviour {
     */
     public GameObject enemies;
 
-    public JumpOverGoomba jumpOverGoomba;
+    // public JumpOverGoomba jumpOverGoomba;
     private Vector3 startPosition;
     
     // for animation
@@ -45,8 +45,10 @@ public class PlayerController: MonoBehaviour {
     private bool moving = false;
     private bool wasIdle = true;
 
+    public UnityEvent onPlayerDamage;
     public UnityEvent onPlayerDie;
-
+    public UnityEvent onEnemyKill;
+    
     // state
     [System.NonSerialized]
     public bool alive = true;
@@ -137,6 +139,34 @@ public class PlayerController: MonoBehaviour {
         // Debug.Log("X-SPEED " + Mathf.Abs(marioBody.velocity.x));
         marioAnimator.SetFloat("xSpeed", velocity);
         if (velocity < 0.01f) { wasIdle = true; }
+
+        BoxCollider2D collider = gameObject.GetComponent<BoxCollider2D>();
+        if (collider)
+        {
+            collider.size = gameObject.GetComponent<SpriteRenderer>().sprite.bounds.size;
+            collider.offset = gameObject.GetComponent<SpriteRenderer>().sprite.bounds.center;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GetComponent<MarioStateController>().Fire();
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            updateMarioShouldFaceRight(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            updateMarioShouldFaceRight(true);
+        }
+        
+        State currentState = GetComponent<MarioStateController>().currentState;
+        // Debug.Log('CSTATE ' + currentState);
+        if (this.alive && (currentState?.name == "DeadMario"))
+        {
+            Debug.Log("PLAY_OUT_DEATH");
+            this.PlayOutDeath();
+        }
     }
 
     void FlipMarioSprite(int value) {
@@ -161,12 +191,14 @@ public class PlayerController: MonoBehaviour {
     
     private void updateMarioShouldFaceRight(bool value)
     {
+        // Debug.Log("FLIP_S " + value);
         faceRightState = value;
         marioFaceRight.SetValue(faceRightState);
     }
     
     public void DamageMario()
     {
+        Debug.Log("DAMAGE_MARIO_ENTER");
         // GameOverAnimationStart(); // last time Mario dies right away
 
         // pass this to StateController to see if Mario should start game over
@@ -180,7 +212,6 @@ public class PlayerController: MonoBehaviour {
         Debug.Log("PLAYER_GAME_OVER");
         yield return new WaitForSeconds(1.0f);
         Time.timeScale = 0.0f;
-
         onPlayerDie.Invoke();
     }
 
@@ -248,12 +279,15 @@ public class PlayerController: MonoBehaviour {
             Debug.Log("Collided with goomba!");
             // StartCoroutine(this.activateGameOver());
 
-            if (fromBottom) {
+            if (fromBottom)
+            {
+                onEnemyKill.Invoke();
             } else if (alive) {
                 // play death animation
-                marioAnimator.Play("mario-die");
-                marioAudio.PlayOneShot(marioDeath);
-                alive = false;
+                onPlayerDamage.Invoke();
+                // marioAnimator.Play("mario-die");
+                // marioAudio.PlayOneShot(marioDeath);
+                // alive = false;
             }
         }
 
@@ -266,6 +300,13 @@ public class PlayerController: MonoBehaviour {
             // update animator state
             marioAnimator.SetBool("onGround", onGroundState);
         }
+    }
+
+    public void PlayOutDeath()
+    {
+        marioAnimator.Play("mario-die");
+        marioAudio.PlayOneShot(marioDeath);
+        alive = false;
     }
 
     public void RestartButtonCallback(int input) {
@@ -291,6 +332,7 @@ public class PlayerController: MonoBehaviour {
 
         // reset camera position
         gameCamera.position = new Vector3(0, 0, -10);
+        GetComponent<MarioStateController>().restart();
     }
 
     private void ResetGame() {
@@ -322,6 +364,5 @@ public class PlayerController: MonoBehaviour {
         }
         */
         // reset score
-        jumpOverGoomba.score = 0;
     }
 } 

@@ -21,6 +21,9 @@ public class HUDManager: MonoBehaviour {
     // Start is called before the first frame update
     void Start()
     {
+        string scoreText = "Score: " + this.gameScore.Value.ToString();
+        this.scoreText.text = scoreText;
+        this.gameOverScoreText.text = scoreText;
     }
 
     // Update is called once per frame
@@ -64,6 +67,16 @@ public class HUDManager: MonoBehaviour {
         // GameStart();
     }
 
+    public void IncrementScore(int increment)
+    {
+        Debug.Log("INCREMENT " + increment);
+        this.gameScore.SetValue(increment + this.gameScore.Value);
+        string scoreText = "Score: " + this.gameScore.Value.ToString();
+        this.scoreText.text = scoreText;
+        this.gameOverScoreText.text = scoreText;
+        Debug.Log("INCREMENT_END " + this.gameScore.Value);
+    }
+
     public void SetScore(int score) {
         string scoreText = "Score: " + score.ToString();
         this.gameScore.Value = score;
@@ -94,6 +107,8 @@ public class HUDManager: MonoBehaviour {
     public void GameRestart()
     {
         this.GameStart();
+        this.gameScore.SetValue(0);
+        this.IncrementScore(0);
     }
 
     public void GameOver() {

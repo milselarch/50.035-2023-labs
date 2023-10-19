@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class BasePowerup : MonoBehaviour, IPowerup
 {
-    public IPowerupType type;
+    public PowerupType type;
     public bool spawned = false;
     protected bool consumed = false;
     protected bool goRight = true;
@@ -38,7 +38,7 @@ public abstract class BasePowerup : MonoBehaviour, IPowerup
 
     // interface methods
     // 1. concrete methods
-    public IPowerupType powerupType
+    public PowerupType powerupType
     {
         get // getter
         {
